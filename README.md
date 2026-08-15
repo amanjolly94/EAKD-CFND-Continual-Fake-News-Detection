@@ -117,6 +117,39 @@ default) and a re-run picks up exactly where a prior one stopped, keyed by
 calibration/sensitivity/cost-logging/hybrid outputs to reproduce the
 manuscript's tables from these JSON files.
 
+## Results
+
+Core 6-method comparison (5 seeds, BERT-base), from `runs/core_*.json` via
+`scripts/merge_results.py`:
+
+| Method | Dataset | Acc. (%) | F1 (%) | BWT (%) |
+|---|---|---|---|---|
+| Fine-tuning (FT) | PHEME-Event | 16.1 ± 1.2 | 3.2 ± 0.2 | -85.3 ± 2.0 |
+| Fine-tuning (FT) | FNN-Poli-Time | 27.4 ± 2.8 | 7.1 ± 2.5 | -80.5 ± 3.4 |
+| Fine-tuning (FT) | FNN-Gossip-Time | 29.0 ± 0.2 | 8.9 ± 0.1 | -84.6 ± 2.0 |
+| EWC | PHEME-Event | 16.5 ± 0.5 | 3.3 ± 0.1 | -86.3 ± 1.6 |
+| EWC | FNN-Poli-Time | 28.6 ± 3.4 | 7.9 ± 2.9 | -82.1 ± 2.7 |
+| EWC | FNN-Gossip-Time | 28.9 ± 0.3 | 8.9 ± 0.1 | -84.8 ± 1.6 |
+| LwF | PHEME-Event | 16.5 ± 0.3 | 3.3 ± 0.1 | -87.1 ± 1.0 |
+| LwF | FNN-Poli-Time | 31.2 ± 1.0 | 10.1 ± 0.5 | -81.4 ± 2.4 |
+| LwF | FNN-Gossip-Time | 28.9 ± 0.5 | 8.9 ± 0.2 | -84.3 ± 1.5 |
+| DER (Buffer=200) | PHEME-Event | 84.8 ± 1.5 | 16.5 ± 0.2 | -3.2 ± 2.1 |
+| DER (Buffer=200) | FNN-Poli-Time | 30.4 ± 0.9 | 9.9 ± 0.3 | -80.1 ± 4.0 |
+| DER (Buffer=200) | FNN-Gossip-Time | 29.4 ± 0.3 | 9.1 ± 0.1 | -85.4 ± 0.5 |
+| LUD | PHEME-Event | 16.7 ± 0.3 | 3.3 ± 0.1 | -87.1 ± 0.9 |
+| LUD | FNN-Poli-Time | 31.2 ± 0.5 | 10.1 ± 0.3 | -82.2 ± 2.3 |
+| LUD | FNN-Gossip-Time | 29.0 ± 0.3 | 8.8 ± 0.2 | -84.8 ± 1.5 |
+| **EAKD-CFND (Ours)** | PHEME-Event | **16.8 ± 0.4** | **3.3 ± 0.1** | **-87.2 ± 1.1** |
+| **EAKD-CFND (Ours)** | FNN-Poli-Time | **29.8 ± 2.8** | **9.0 ± 2.4** | **-81.6 ± 2.0** |
+| **EAKD-CFND (Ours)** | FNN-Gossip-Time | **29.1 ± 0.4** | **8.9 ± 0.1** | **-84.6 ± 1.7** |
+
+PHEME-Event is the one benchmark where the exemplar-free default loses badly
+to DER's replay buffer (16.8% vs 84.8% accuracy) — see EAKD-CFND-R (phase 6
+above) for the rehearsal-augmented configuration that closes this gap.
+Paired significance tests for these comparisons are in
+`scripts/compute_review_stats.py`'s output and the manuscript's Table
+`tab:significance`.
+
 ## Known scope cuts
 
 - No additional adaptive-KD baseline beyond LUD/DER/EWC/LwF is implemented —
