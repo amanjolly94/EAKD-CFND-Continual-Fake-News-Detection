@@ -27,8 +27,10 @@ FILES = {
     ("FNN-Poli-Time", "+UW"): "hybrid_uw_poli.json",
     ("FNN-Poli-Time", "+PP+UW"): "hybrid_both_poli.json",
     ("FNN-Poli-Time", "no-verification"): "hybrid_noverify_poli.json",
+    ("FNN-Gossip-Time", "plain replay"): "hybrid_base_gossip.json",
     ("FNN-Gossip-Time", "+PP"): "hybrid_pp_gossip.json",
     ("FNN-Gossip-Time", "+UW"): "hybrid_uw_gossip.json",
+    ("FNN-Gossip-Time", "+PP+UW"): "hybrid_both_gossip.json",
     ("FNN-Gossip-Time", "no-verification"): "hybrid_noverify_gossip.json",
 }
 
@@ -86,10 +88,6 @@ def main():
         sig = "*" if p_adj < 0.05 else " "
         print(f"{sig} {label:28s} {dataset:18s} p_raw={stats['p']:.4g}  p_holm={p_adj:.4g}")
 
-    print()
-    print("NOTE: FNN-Gossip-Time 'plain replay' and '+PP+UW' rows are omitted "
-          "-- those two kernels are still running. Re-run this script once "
-          "hybrid_base_gossip.json / hybrid_both_gossip.json land.")
 
 
 if __name__ == "__main__":
