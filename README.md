@@ -173,9 +173,13 @@ Same protocol, reservoir buffer added on top of EAKD-CFND (`scripts/run_hybrid_e
 | FNN-Gossip-Time | +PP+UW | *pending* | *pending* |
 
 On PHEME-Event, every variant closes almost the entire gap to DER's 84.8%
-(EAKD-CFND alone gets 16.8%). On FNN-Poli-Time, rehearsal adds a real,
-measurable benefit over EAKD-CFND's 29.8%, with `+PP` and `+PP+UW` the
-strongest variants, not plain replay. On FNN-Gossip-Time, every R-variant
+(EAKD-CFND alone gets 16.8%). On FNN-Poli-Time, R-variants are numerically
+higher than EAKD-CFND's 29.8% (`+PP+UW` reaches 37.8%), and paired
+seed-matched t-tests give raw p-values below 0.05 for `+PP` and `+PP+UW`
+against both EAKD-CFND and DER (`scripts/compute_r_variant_stats.py`) — but
+none of these survive Holm-Bonferroni correction across the full comparison
+family (best corrected p=0.099), so this is a numeric trend on 5 seeds, not
+a statistically confirmed benefit yet. On FNN-Gossip-Time, every R-variant
 lands within noise of plain EAKD-CFND's 29.1%, consistent with that
 dataset's tasks being near-duplicates of each other (TF-IDF task-similarity
 0.816 vs. PHEME-Event's 0.199 and FNN-Poli-Time's 0.406) rather than a
