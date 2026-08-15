@@ -1,0 +1,14 @@
+# datasets / run outputs (large, not meant to be versioned)
+data/
+runs/
+
+# credentials — never commit these
+*.env
+*_service_account*.json
+kaggle.json
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
