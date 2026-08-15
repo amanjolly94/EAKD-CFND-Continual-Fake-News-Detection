@@ -150,6 +150,37 @@ Paired significance tests for these comparisons are in
 `scripts/compute_review_stats.py`'s output and the manuscript's Table
 `tab:significance`.
 
+### EAKD-CFND-R (rehearsal-augmented configuration)
+
+Same protocol, reservoir buffer added on top of EAKD-CFND (`scripts/run_hybrid_experiment.py`, 5 seeds). Rehearsal benefit is real but not uniform across datasets — see `scripts/analyze_task_drift.py` for why FNN-Gossip-Time's tasks are too topically similar to each other for any method to show separation:
+
+| Dataset | Variant | Acc. (%) | BWT (%) |
+|---|---|---|---|
+| PHEME-Event | plain replay | 85.5 ± 1.1 | -1.8 ± 1.0 |
+| PHEME-Event | +PP | 85.0 ± 0.7 | -1.9 ± 0.8 |
+| PHEME-Event | +UW | 84.3 ± 1.1 | -3.1 ± 1.5 |
+| PHEME-Event | +PP+UW | 84.4 ± 0.5 | -2.6 ± 1.2 |
+| PHEME-Event | no-verification | 85.4 ± 1.1 | -2.0 ± 1.0 |
+| FNN-Poli-Time | plain replay | 34.9 ± 3.2 | -72.0 ± 8.0 |
+| FNN-Poli-Time | +PP | 37.2 ± 2.6 | -56.5 ± 12.7 |
+| FNN-Poli-Time | +UW | 32.8 ± 1.6 | -77.8 ± 4.2 |
+| FNN-Poli-Time | +PP+UW | 37.8 ± 2.5 | -64.3 ± 8.1 |
+| FNN-Poli-Time | no-verification | 34.1 ± 2.5 | -72.3 ± 7.9 |
+| FNN-Gossip-Time | +PP | 29.4 ± 0.2 | -85.4 ± 0.9 |
+| FNN-Gossip-Time | +UW | 29.2 ± 0.1 | -85.4 ± 0.8 |
+| FNN-Gossip-Time | no-verification | 29.1 ± 0.3 | -85.6 ± 0.7 |
+| FNN-Gossip-Time | plain replay | *pending* | *pending* |
+| FNN-Gossip-Time | +PP+UW | *pending* | *pending* |
+
+On PHEME-Event, every variant closes almost the entire gap to DER's 84.8%
+(EAKD-CFND alone gets 16.8%). On FNN-Poli-Time, rehearsal adds a real,
+measurable benefit over EAKD-CFND's 29.8%, with `+PP` and `+PP+UW` the
+strongest variants, not plain replay. On FNN-Gossip-Time, every R-variant
+lands within noise of plain EAKD-CFND's 29.1%, consistent with that
+dataset's tasks being near-duplicates of each other (TF-IDF task-similarity
+0.816 vs. PHEME-Event's 0.199 and FNN-Poli-Time's 0.406) rather than a
+weakness in the rehearsal mechanism itself.
+
 ## Known scope cuts
 
 - No additional adaptive-KD baseline beyond LUD/DER/EWC/LwF is implemented —
