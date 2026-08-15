@@ -17,12 +17,27 @@ Usage: python -m scripts.run_isolated_task_ceiling
 """
 from __future__ import annotations
 
+import dataclasses
+
 from eakd_cfnd.config import DEFAULT_SEEDS, RunConfig
-from eakd_cfnd.data import load_dataset
+from eakd_cfnd.data import Task, load_dataset
 from eakd_cfnd.train import run_cil_experiment
 from scripts.common import aggregate_seeds, run_with_checkpoint, save_json
 
 SEEDS = DEFAULT_SEEDS[:3]  # 3 seeds is enough for a ceiling estimate; keep this cheap
+
+
+def _remap_to_local_labels(task: Task) -> Task:
+    """run_cil_experiment builds the model with num_labels=len(classes) and
+    indexes logits by the raw class-id values, which only lines up when a
+    task sequence's ids start at 0 and grow contiguously. A task pulled out
+    of the middle of a sequence (e.g. PHEME task_id=1 -> global classes
+    [2, 3]) would index out-of-bounds against a 2-label model. Remap veracity
+    (0/1) back to a local, always-valid class id so every isolated run looks
+    like a fresh task_id=0 regardless of where it sat in the real sequence."""
+    remapped = [dataclasses.replace(inst, label=inst.veracity) for inst in task.train]
+    remapped_test = [dataclasses.replace(inst, label=inst.veracity) for inst in task.test]
+    return Task(task_id=0, classes=[0, 1], train=remapped, test=remapped_test)
 
 
 def main():
@@ -31,13 +46,14 @@ def main():
         tasks = load_dataset(dataset_name, root="data")
         all_results[dataset_name] = {}
         for task in tasks:
+            local_task = _remap_to_local_labels(task)
             per_seed = []
             for seed in SEEDS:
-                def _run(task=task, seed=seed):
+                def _run(local_task=local_task, seed=seed):
                     config = RunConfig(dataset=dataset_name, method="FT", seed=seed)
-                    # single-task list: no prior classes, no continual dynamics,
-                    # this IS the isolated ceiling by construction.
-                    return run_cil_experiment([task], config)
+                    # single-task list, local 0/1 labels: no prior classes, no
+                    # continual dynamics, this IS the isolated ceiling by construction.
+                    return run_cil_experiment([local_task], config)
                 ckpt_dir = f"runs/checkpoints/isolated_ceiling/{dataset_name}"
                 summary = run_with_checkpoint(ckpt_dir, f"task{task.task_id}_seed{seed}", _run)
                 per_seed.append(summary)
